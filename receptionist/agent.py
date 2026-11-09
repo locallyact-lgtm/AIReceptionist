@@ -56,6 +56,11 @@ def _build_realtime_model_kwargs(voice_config, api_key: str | None) -> dict:
     working across plugin versions: older plugins (pre-1.6) silently get the
     minimal kwargs.
 
+    `RealtimeReasoning` moved from `livekit.plugins.openai.realtime.realtime_model`
+    (<= 1.8.2) to `openai.types.realtime` (>= 1.8.11, when the direct/hosted
+    realtime engines were unified in livekit.agents.llm._realtime.openai).
+    Both import paths are tried so this works across that range.
+
     Note: in 1.6 `max_response_output_tokens` is a constructor parameter on
     some builds and an `update_options()` setter on others. We pass it as a
     constructor kwarg when supported there; `_apply_realtime_options` covers
@@ -74,9 +79,16 @@ def _build_realtime_model_kwargs(voice_config, api_key: str | None) -> dict:
 
     if voice_config.reasoning_effort is not None and "reasoning" in supported:
         try:
-            from livekit.plugins.openai.realtime.realtime_model import (
-                RealtimeReasoning,
-            )
+            try:
+                # livekit-plugins-openai >= 1.8.x re-exports the realtime
+                # engine from livekit.agents.llm._realtime.openai, which
+                # sources RealtimeReasoning from openai.types.realtime.
+                from openai.types.realtime import RealtimeReasoning
+            except ImportError:
+                # Older plugin builds (<= 1.8.2) defined it locally.
+                from livekit.plugins.openai.realtime.realtime_model import (
+                    RealtimeReasoning,
+                )
 
             kwargs["reasoning"] = RealtimeReasoning(
                 effort=voice_config.reasoning_effort

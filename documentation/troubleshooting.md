@@ -610,6 +610,11 @@ level**, so the logs look like clean gaps. Upgrade to >= 1.6 to surface the
 3. **Reduce reasoning effort.** `voice.model: gpt-realtime-2.1` with
    `voice.reasoning_effort: low` can reduce latency and output-token usage
    relative to higher effort. Validate caller quality before changing it.
+   If it doesn't seem to be taking effect, check the logs for `voice.
+   reasoning_effort set but RealtimeReasoning unavailable` — this fires if
+   the installed `livekit-plugins-openai` moved `RealtimeReasoning` to a
+   location `_build_realtime_model_kwargs` doesn't yet know about (see the
+   SDK-version-sensitive code note in `CLAUDE.md`).
 4. **Shorten the system prompt.** Trim FAQs/routing for the tenant; the prompt
    is re-sent every turn, so its size is a per-turn token multiplier.
 

@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_No unreleased changes yet._
+### Fixed
+- `_build_realtime_model_kwargs` now finds `RealtimeReasoning` at
+  `openai.types.realtime` first, falling back to the old
+  `livekit.plugins.openai.realtime.realtime_model` location. On
+  `livekit-plugins-openai` 1.8.11 the direct/hosted realtime engines were
+  unified into `livekit.agents.llm._realtime.openai`, which sources
+  `RealtimeReasoning` from the `openai` SDK's own types instead of defining
+  it locally — the old-only import silently dropped `voice.reasoning_effort`
+  and logged a WARNING instead of raising.
 
 ---
 

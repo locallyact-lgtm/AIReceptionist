@@ -94,8 +94,8 @@ AIReceptionist/
 
 ### SDK-version-sensitive code (check before any livekit upgrade)
 
-- `receptionist/agent.py` `_build_realtime_model_kwargs` / `_apply_realtime_options` detect `reasoning` and `update_options(max_response_output_tokens=)` by signature inspection and WARN when absent.
-- `_RECOVERABLE_REALTIME_ERROR_HINTS` and `_BENIGN_ENGINE_CLOSED_MESSAGE` match SDK error/log text by substring. Re-verify the message shapes after an upgrade (last verified against 1.8.2).
+- `receptionist/agent.py` `_build_realtime_model_kwargs` / `_apply_realtime_options` detect `reasoning` and `update_options(max_response_output_tokens=)` by signature inspection and WARN when absent. `RealtimeReasoning` itself is imported from `openai.types.realtime` (>= 1.8.11) with a fallback to the old `livekit.plugins.openai.realtime.realtime_model` location (<= 1.8.2) — re-check this import path too after any upgrade, not just the signature.
+- `_RECOVERABLE_REALTIME_ERROR_HINTS` and `_BENIGN_ENGINE_CLOSED_MESSAGE` match SDK error/log text by substring. Re-verify the message shapes after an upgrade (structurally checked against 1.8.11 — `err.recoverable` / nested `err.error` still present — but the hint strings themselves need confirming against a live call).
 
 ---
 
